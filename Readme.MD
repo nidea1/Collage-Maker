@@ -9,7 +9,7 @@ The purpose behind this project is to assist users in making a collage with betw
 
 ## Usage
 
-You can use in web from [here](nidea1.pythonanywhere.com).
+You can use in web from [here](http://nidea1.pythonanywhere.com).
 
 ## Examples
 
