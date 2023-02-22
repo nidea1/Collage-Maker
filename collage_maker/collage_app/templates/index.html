@@ -36,6 +36,10 @@
             align-items: center;
         }
 
+        .mb-n{
+            margin-bottom: -1rem !important;
+        }
+
         .b-example-divider {
             height: 0.1rem;
             background-color: rgba(0, 0, 0, .1);
@@ -76,31 +80,34 @@
             <div class="middle text-center">
 
                 <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="px-4 py-5 text-center border border-1 rounded-top bg-white">
                         <h1 class="display-6 fw-bold mb-3">Select style</h1>
                         <div class="b-example-divider mb-4 rounded"></div>
                         <div class="form-floating">
-                            <select class="form-select" id="style-select" aria-label="Select a style" name="style">
-                                <option selected>Please select a style</option>
-                                <option value="style1">Style 1 - 2x2</option>
-                                <option value="style2">Style 2 - 3x2</option>
-                                <option value="style3">Style 3 - 2x3</option>
-                            </select>
-                            <label for="style-select">Works with your select</label>
+                            {{form.style}}
+                            <label for="style">Works with your select</label>
                         </div>
                     </div>
                     <div class="px-4 py-5 text-center border border-1 border-top-0 rounded-bottom bg-white">
                         <h1 class="display-6 fw-bold mb-3">Select images</h1>
                         <div class="b-example-divider mb-4 rounded"></div>
                         <div class="input-group">
-                            <input type="file" name="images" class="form-control" id="image-input" aria-describedby="image-input" aria-label="Upload" multiple accept="image/*" min="2" max="6" required>
+                            {{form.images}}
+                            
                             <button class="btn btn btn-primary" type="submit" id="image-input">Collage!</button>
                         </div>
+                        <div class="b-example-divider mt-4 rounded"></div>
+                        <div id="preview" class ="mt-4 mb-n">
+                            <h5 class="fw-bold">Preview</h5>
+                            <p>PS: Please select images of the same sizes</p>
+                        </div>
                     </div>
+                    
                 </form>
                 
             </div>
-
+            <!-- End Content-->
         </div>
         <!-- End Container -->
 
@@ -109,21 +116,73 @@
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
 
-        <!-- JS for alert -->
+        <!-- JS for alert -->        
         <script>
-            const input = document.querySelector('#image-input');
+            var fileInput = document.querySelector('#image-input');
+            const styleSelect = document.querySelector('#id_style');
             const maxFiles = 6;
             const minFiles = 2;
-        
-            input.addEventListener('change', function() {
-                if (this.files.length < minFiles) {
-                alert(`You need to select at least ${minFiles} files.`);
-                this.value = '';
-                } else if (this.files.length > maxFiles) {
-                alert(`You can select up to ${maxFiles} files.`);
-                this.value = '';
+
+            // Event listener to trigger when files are selected
+            fileInput.addEventListener('change', function(e) {
+                var selectedFiles = e.target.files;
+                var fileCount = selectedFiles.length;
+                
+                if (styleSelect.value === '2'){
+                    if(fileCount < minFiles){
+                        alert(`You need to select at least ${minFiles} files.`)
+                        fileInput.value = null;
+                    } else if(fileCount > maxFiles){
+                        alert(`You can select up to ${maxFiles} files.`);
+                        fileInput.value = null;
+                    } else if(fileCount % 2 == 1) {
+                        alert('You must select 2, 4 or 6 files.');
+                        fileInput.value = null;
+                    }
+                }
+                else{
+                    if(fileCount < minFiles){
+                        alert(`You need to select at least ${minFiles} files.`)
+                        fileInput.value = null;
+                    }
+                    else if(fileCount > maxFiles){
+                        alert(`You can select up to ${maxFiles} files.`);
+                        fileInput.value = null;
+                    }
                 }
             });
+        </script>
+
+        <script>
+            function previewFiles() {
+                var preview = document.querySelector('#preview');
+                var files = document.querySelector('input[type=file]').files;
+
+                preview.innerHTML = '';
+            
+                function readAndPreview(file) {
+            
+                if ( /\.(jpe?g|png|gif)$/i.test(file.name) ) {
+                    var reader = new FileReader();
+            
+                    reader.addEventListener("load", function () {
+                        var image = new Image();
+                        image.height = 100;
+                        image.title = file.name;
+                        image.src = this.result;
+                        preview.appendChild( image );
+                    }, false);
+            
+                    reader.readAsDataURL(file);
+                }
+            
+                }
+            
+                if (files) {
+                [].forEach.call(files, readAndPreview);
+                }
+            
+            }
         </script>
         
         
