@@ -9,7 +9,15 @@ The purpose behind this project is to assist users in making a collage with betw
 
 ## Usage
 
-You can use in web from [here](http://nidea1.pythonanywhere.com).
+1. Install dependencies
+```
+pip install -r requirements.txt
+```
+2. Run server
+```
+python manage.py runserver
+```
+3. Upload your images and Collage!
 
 ## Examples
 
